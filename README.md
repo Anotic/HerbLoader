@@ -14,3 +14,4 @@ Custom Eyes:☑
 Custom Hair:☑  
 Custom Mouth:☑  
 Changable starting items:☑
+Customizable Stats:☑
