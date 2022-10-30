@@ -13,5 +13,5 @@ Custom Icon:☑
 Custom Eyes:☑  
 Custom Hair:☑  
 Custom Mouth:☑  
-Changable starting items:☑
+Changable starting items:☑  
 Customizable Stats:☑
