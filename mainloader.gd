@@ -32,15 +32,15 @@ func _ready():
 		character_data.starting_weapons = []
 		character_data.item_appearances = []
 		character_data.effects = []
-		var character_folder = "user://herbloader/characters/"+folder
-		character_data.my_id = "character_"+folder
+		var character_folder = "user://herbloader/characters/" + folder
+		character_data.my_id = "character_" + folder
 		character_data.unlocked_by_default = true
-		for file in list_files_in_directory("user://herbloader/characters/"+folder):
+		for file in list_files_in_directory("user://herbloader/characters/" + folder):
 			match file:
 				"character.json":
 					var json_file = File.new()
-					if json_file.file_exists(character_folder+"/character.json"):
-						json_file.open(character_folder+"/character.json",File.READ)
+					if json_file.file_exists(character_folder + "/character.json"):
+						json_file.open(character_folder + "/character.json", File.READ)
 						var content = json_file.get_as_text()
 						var dictionary = parse_json(content)
 						json_file.close()
@@ -55,35 +55,49 @@ func _ready():
 								effect.value = stats.get(stat)
 								character_data.effects.append(effect)
 				"icon.png":
-					character_data.icon = load_image(character_folder+"/icon.png",96,96)
+					character_data.icon = load_image(character_folder + "/icon.png", 96, 96)
 				"eyes.png":
 					var eyes = ItemAppearanceData.new()
-					eyes.sprite = load_image(character_folder+"/eyes.png",150,150)
+					eyes.sprite = load_image(character_folder + "/eyes.png", 150, 150)
 					eyes.position = Position.EYES
 					eyes.display_priority = Priority.VERY_LOW
 					eyes.depth = 500
 					character_data.item_appearances.append(eyes)
 				"mouth.png":
 					var mouth = ItemAppearanceData.new()
-					mouth.sprite = load_image(character_folder+"/mouth.png",150,150)
+					mouth.sprite = load_image(character_folder + "/mouth.png", 150, 150)
 					mouth.position = Position.MOUTH
 					mouth.display_priority = Priority.MEDIUM
 					mouth.depth = 550
 					character_data.item_appearances.append(mouth)
 				"hair.png":
 					var hair = ItemAppearanceData.new()
-					hair.sprite = load_image(character_folder+"/hair.png",150,150)
+					hair.sprite = load_image(character_folder + "/hair.png", 150, 150)
 					hair.position = Position.HAT
 					hair.display_priority = Priority.VERY_LOW
 					hair.depth = 1000
 					character_data.item_appearances.append(hair)
+				"torso.png":
+					var torso = ItemAppearanceData.new()
+					torso.sprite = load_image(character_folder + "/torso.png", 150, 150)
+					torso.position = Position.TORSO
+					torso.display_priority = Priority.VERY_LOW
+					torso.depth = 320
+					character_data.item_appearances.append(torso)
+				"nose.png":
+					var nose = ItemAppearanceData.new()
+					nose.sprite = load_image(character_folder + "/nose.png", 150, 150)
+					nose.position = Position.NOSE
+					nose.display_priority = Priority.MEDIUM
+					nose.depth = 550
+					character_data.item_appearances.append(nose)
 		if character_data.starting_weapons != []:
 			ItemService.characters.append(character_data)
 
 func add_weapon(weapon):
 	var melee_weapons = list_files_in_directory("res://weapons/melee/")
 	var ranged_weapons = list_files_in_directory("res://weapons/ranged/")
-	if ranged_weapons.find(weapon) != -1:
+	if ranged_weapons.find(weapon) != - 1:
 		var weapon_load = null
 		var tier = 0
 		while weapon_load == null:
@@ -91,10 +105,10 @@ func add_weapon(weapon):
 			var extra = ""
 			if tier != 1:
 				extra = "_" + str(tier)
-			weapon_load = load("res://weapons/ranged/"+weapon+"/"+str(tier)+"/"+weapon+extra+"_data.tres")
+			weapon_load = load("res://weapons/ranged/" + weapon + "/" + str(tier) + "/" + weapon + extra + "_data.tres")
 		print(weapon_load)
 		return weapon_load
-	elif melee_weapons.find(weapon) != -1:
+	elif melee_weapons.find(weapon) != - 1:
 		var weapon_load = null
 		var tier = 0
 		while weapon_load == null:
@@ -102,14 +116,14 @@ func add_weapon(weapon):
 			var extra = ""
 			if tier != 1:
 				extra = "_" + str(tier)
-			weapon_load = load("res://weapons/melee/"+weapon+"/"+str(tier)+"/"+weapon+extra+"_data.tres")
+			weapon_load = load("res://weapons/melee/" + weapon + "/" + str(tier) + "/" + weapon + extra + "_data.tres")
 		return weapon_load
 
-func load_image(path,x=0,y=0):
+func load_image(path, x = 0, y = 0):
 	var image = Image.new()
 	image.load(path)
 	if x > 0 and y > 0:
-		image.resize(x,y)
+		image.resize(x, y)
 	var texture = ImageTexture.new()
 	texture.create_from_image(image)
 	return texture
