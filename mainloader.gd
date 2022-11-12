@@ -27,7 +27,6 @@ func _ready():
 			[character_path, err])
 			return 
 	for folder in list_files_in_directory(character_path):
-		print(folder)
 		var character_data = CharacterData.new()
 		character_data.starting_weapons = []
 		character_data.item_appearances = []
@@ -43,6 +42,7 @@ func _ready():
 						json_file.open(character_folder + "/character.json", File.READ)
 						var content = json_file.get_as_text()
 						var dictionary = parse_json(content)
+						print(dictionary)
 						json_file.close()
 						character_data.name = dictionary.name
 						for weapon in dictionary.starting_weapons:
@@ -50,47 +50,37 @@ func _ready():
 						var stats = dictionary.stats
 						for stat in stats:
 							if stats.get(stat) != 0:
-								var effect = Effect.new()
-								effect.key = "stat_" + str(stat)
-								effect.value = stats.get(stat)
-								character_data.effects.append(effect)
+								var new_effect = Effect.new()
+								new_effect.key = "stat_" + str(stat)
+								new_effect.value = stats.get(stat)
+								character_data.effects.append(new_effect)
+						var weapon_slots = dictionary.weapon_slots
+						var new_replace_effect = ReplaceEffect.new()
+						new_replace_effect.key = "weapon_slot"
+						new_replace_effect.text_key = "EFFECT_MAX_WEAPONS"
+						new_replace_effect.value = weapon_slots
+						character_data.effects.append(new_replace_effect)
+						var effects = dictionary.effects
+						for effect in effects:
+							var effect_dictionary = effects.get(effect)
+							var new_effect = Effect.new()
+							new_effect.key = effect_dictionary.get("key")
+							new_effect.text_key = effect_dictionary.get("text_key")
+							new_effect.value = effect_dictionary.get("value")
+							new_effect.effect_sign = effect_dictionary.get("effect_sign")
+							character_data.effects.append(new_effect)
 				"icon.png":
 					character_data.icon = load_image(character_folder + "/icon.png", 96, 96)
 				"eyes.png":
-					var eyes = ItemAppearanceData.new()
-					eyes.sprite = load_image(character_folder + "/eyes.png", 150, 150)
-					eyes.position = Position.EYES
-					eyes.display_priority = Priority.VERY_LOW
-					eyes.depth = 500
-					character_data.item_appearances.append(eyes)
+					create_tem_appearance("eyes",Position.EYES,Priority.VERY_LOW,500,character_folder,character_data)
 				"mouth.png":
-					var mouth = ItemAppearanceData.new()
-					mouth.sprite = load_image(character_folder + "/mouth.png", 150, 150)
-					mouth.position = Position.MOUTH
-					mouth.display_priority = Priority.MEDIUM
-					mouth.depth = 550
-					character_data.item_appearances.append(mouth)
+					create_tem_appearance("mouth",Position.MOUTH,Priority.MEDIUM,550,character_folder,character_data)
 				"hair.png":
-					var hair = ItemAppearanceData.new()
-					hair.sprite = load_image(character_folder + "/hair.png", 150, 150)
-					hair.position = Position.HAT
-					hair.display_priority = Priority.VERY_LOW
-					hair.depth = 1000
-					character_data.item_appearances.append(hair)
+					create_tem_appearance("hair",Position.HAT,Priority.VERY_LOW,1000,character_folder,character_data)
 				"torso.png":
-					var torso = ItemAppearanceData.new()
-					torso.sprite = load_image(character_folder + "/torso.png", 150, 150)
-					torso.position = Position.TORSO
-					torso.display_priority = Priority.VERY_LOW
-					torso.depth = 320
-					character_data.item_appearances.append(torso)
+					create_tem_appearance("torso",Position.TORSO,Priority.VERY_LOW,320,character_folder,character_data)
 				"nose.png":
-					var nose = ItemAppearanceData.new()
-					nose.sprite = load_image(character_folder + "/nose.png", 150, 150)
-					nose.position = Position.NOSE
-					nose.display_priority = Priority.MEDIUM
-					nose.depth = 550
-					character_data.item_appearances.append(nose)
+					create_tem_appearance("nose",Position.NOSE,Priority.MEDIUM,550,character_folder,character_data)
 		if character_data.starting_weapons != []:
 			ItemService.characters.append(character_data)
 
@@ -118,6 +108,14 @@ func add_weapon(weapon):
 				extra = "_" + str(tier)
 			weapon_load = load("res://weapons/melee/" + weapon + "/" + str(tier) + "/" + weapon + extra + "_data.tres")
 		return weapon_load
+
+func create_tem_appearance(item_name,pos,prio,depth,character_folder,character_data):
+	var item = ItemAppearanceData.new()
+	item.sprite = load_image(character_folder + "/"+ item_name +".png", 150, 150)
+	item.position = pos
+	item.display_priority = prio
+	item.depth = depth
+	character_data.item_appearances.append(item)
 
 func load_image(path, x = 0, y = 0):
 	var image = Image.new()
